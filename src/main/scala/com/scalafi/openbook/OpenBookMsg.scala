@@ -15,7 +15,7 @@ private[openbook] trait Parser {
     }
 
     def map[O](f: T => O): Parser[O] = new Parser[O] {
-      override def parseInternal(byteBuffer: ByteBuffer): O =
+      def parseInternal(byteBuffer: ByteBuffer): O =
         f(parser.parseInternal(byteBuffer))
     }
   }
