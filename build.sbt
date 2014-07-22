@@ -5,7 +5,7 @@ version := "0.0.1"
 organization := "com.scalafi.openbook"
 
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.10.4"
 
 scalacOptions += "-deprecation"
 

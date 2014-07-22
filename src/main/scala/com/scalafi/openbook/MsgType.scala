@@ -8,11 +8,9 @@ object MsgType {
 
   case object DeltaUpdate extends MsgType
 
-  case class UnknownMsgType(code: Int) extends MsgType
-
-  def apply(code: Int): MsgType = code match {
+  def apply(code: Short): MsgType = code match {
     case 230 => FullUpdate
     case 231 => DeltaUpdate
-    case _ => UnknownMsgType(code)
+    case _ => sys.error(s"Unknown message type code: '$code'")
   }
 }
