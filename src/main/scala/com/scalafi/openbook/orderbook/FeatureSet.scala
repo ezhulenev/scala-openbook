@@ -15,14 +15,10 @@ class BasicSet(val orderBook: OrderBook) extends AnyVal {
     } else None
   }
 
-  def askVolume(i: Int): Option[Feature[Int]] = {
-    orderBook.sell.keySet.drop(i - 1).headOption.map(price => Feature(s"askV_$i", orderBook.sell(price)))
-  }
+  def askVolume(i: Int): Option[Feature[Int]] =
+    askPrice(i).map(p => Feature(s"askV_$i", orderBook.sell(p.value)))
 
-  def bidVolume(i: Int): Option[Feature[Int]] = {
-    val bidPrices = orderBook.buy.keySet
-    if (bidPrices.size >= i) {
-      Some(Feature(s"bidV_$i", orderBook.buy(bidPrices.drop(bidPrices.size - i).head)))
-    } else None
-  }
+
+  def bidVolume(i: Int): Option[Feature[Int]] =
+    bidPrice(i).map(p => Feature(s"bidV_$i", orderBook.buy(p.value)))
 }
