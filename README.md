@@ -15,9 +15,11 @@ Order book attributes/features extraction based on [Modeling high-frequency limi
 > between ask and bid sides. By further taking the recent history of current data into consideration,
 > we devise the features in the time-sensitive set.
 
+
 ##### Order book messages
 
 ![Message book](https://raw.github.com/ezhulenev/scala-openbook/master/assets/messagebook.png)
+
 
 ##### Feature sets
 
