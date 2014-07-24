@@ -2,6 +2,11 @@ package com.scalafi.openbook.orderbook
 
 case class Feature[T](name: String, value: T)
 
+object FeatureSet {
+  implicit def basicSet(orderBook: OrderBook) =
+    new BasicSet(orderBook)
+}
+
 class BasicSet(val orderBook: OrderBook) extends AnyVal {
 
   def askPrice(i: Int): Option[Feature[Int]] = {
