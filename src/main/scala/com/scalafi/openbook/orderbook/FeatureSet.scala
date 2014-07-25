@@ -1,8 +1,8 @@
 package com.scalafi.openbook.orderbook
 
 import scala.language.implicitConversions
-import com.scalafi.openbook.Side
 
+/*
 case class Feature[T](name: String, value: T)
 
 object FeatureSet {
@@ -131,4 +131,4 @@ class TimeSensitiveSet(val orderBook: OrderBook) extends AnyVal {
         Feature(s"bidArrivalRate_$i", orders.toDouble / dMillis)
     }
   }
-}
+}*/
