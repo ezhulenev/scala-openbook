@@ -18,7 +18,7 @@ class OrderBookSpec extends FlatSpec with GivenWhenThen {
       symbol = Symbol,
       msgSize = 46,
       securityIndex = 0,
-      sourceTime = sourceTime,
+      sourceTime = sourceTime + 300000,
       sourceTimeMicroSecs = sourceTimeMicroSecs,
       quoteCondition = QuoteCondition.Normal,
       tradingStatus = TradingStatus.Opened,
@@ -47,7 +47,7 @@ class OrderBookSpec extends FlatSpec with GivenWhenThen {
 
     assert(orderBook.buy.size == 1)
     assert(orderBook.sell.size == 1)
-    assert(orderBook.orders.size == 3)
+    assert(orderBook.trail.size == 2)
 
     And("basic set features correctly calculated")
     assert(orderBook.askPrice(1).map(_.value) == Some(11000))
@@ -64,7 +64,10 @@ class OrderBookSpec extends FlatSpec with GivenWhenThen {
 
     assert(orderBookUpd.buy.size == 1)
     assert(orderBookUpd.sell.size == 2)
-    assert(orderBookUpd.orders.size == 3)
+    assert(orderBookUpd.trail.size == 2)
+
+    And("order book trail should contain previous state")
+    assert(orderBookUpd.trail.last == orderBook)
 
     And("basic set features correctly updated")
     assert(orderBookUpd.askPrice(1).map(_.value) == Some(11000))

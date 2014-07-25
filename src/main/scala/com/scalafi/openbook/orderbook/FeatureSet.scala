@@ -1,6 +1,7 @@
 package com.scalafi.openbook.orderbook
 
 import scala.language.implicitConversions
+import com.scalafi.openbook.Side
 
 case class Feature[T](name: String, value: T)
 
@@ -113,4 +114,21 @@ class TimeInsensitiveSet(val orderBook: OrderBook) extends AnyVal {
 
 class TimeSensitiveSet(val orderBook: OrderBook) extends AnyVal {
 
+  def askArrivalRate(i: Int): Option[Feature[Double]] = {
+    orderBook.trail.headOption.map {
+      head =>
+        val dMillis = head.sourceT.millis
+        val orders = orderBook.trail.count(_.order.side == Side.Sell)
+        Feature(s"askArrivalRate_$i", orders.toDouble / dMillis)
+    }
+  }
+
+  def bidArrivalRate(i: Int): Option[Feature[Double]] = {
+    orderBook.trail.headOption.map {
+      head =>
+        val dMillis = head.sourceT.millis
+        val orders = orderBook.trail.count(_.order.side == Side.Buy)
+        Feature(s"bidArrivalRate_$i", orders.toDouble / dMillis)
+    }
+  }
 }

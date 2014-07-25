@@ -4,21 +4,33 @@ import scala.collection.immutable.TreeMap
 import com.scalafi.openbook.{Side, OpenBookMsg}
 import scala.concurrent.duration._
 
+
+case class SourceT(sourceTime: Int, sourceTimeMicroSecs: Int) {
+  val MicrosInMillis = 1000l
+
+  def micros: Long =
+    sourceTime * MicrosInMillis + sourceTimeMicroSecs
+
+  def millis: Long =
+    sourceTime * sourceTimeMicroSecs / MicrosInMillis
+}
+
 case class OrderBook(symbol: String,
                      d: FiniteDuration = 1.second,
                      buy: TreeMap[Int, Int] = TreeMap.empty,
                      sell: TreeMap[Int, Int] = TreeMap.empty,
-                     orders: Vector[OpenBookMsg] = Vector.empty) {
+                     sourceT: SourceT = SourceT(0, 0),
+                     order: OpenBookMsg = null,
+                     trail: Vector[OrderBook] = Vector.empty) {
 
-  private def recentOrders(order: OpenBookMsg): Vector[OpenBookMsg] = {
-    val MicrosInMillis = 1000
+  private implicit class RichOpenBookMsg(msg: OpenBookMsg) {
+    def sourceT = SourceT(msg.sourceTime, msg.sourceTimeMicroSecs)
+  }
 
-    def orderT(o: OpenBookMsg): Long =
-      o.sourceTime * MicrosInMillis + o.sourceTimeMicroSecs
-
-    val lastT = orderT(order)
-
-    orders.dropWhile(o => (lastT - orderT(o)) > d.toMicros) :+ order
+  // Build new OrderBook trail & clean transitive trail history
+  private def trail(order: OpenBookMsg): Vector[OrderBook] = {
+    val lastT = order.sourceT.micros
+    trail.dropWhile(o => (lastT - o.sourceT.micros) > d.toMicros).map(_.copy(trail = Vector.empty)) :+ this
   }
 
   def update(order: OpenBookMsg): OrderBook = {
@@ -28,25 +40,33 @@ case class OrderBook(symbol: String,
       case _ if order.side == Side.Buy & order.volume > 0 =>
         copy(
           buy = buy + (order.priceNumerator -> order.volume),
-          orders = recentOrders(order)
+          sourceT = SourceT(order.sourceTime, order.sourceTimeMicroSecs),
+          order = order,
+          trail = trail(order)
         )
 
       case _ if order.side == Side.Buy & order.volume == 0 =>
         copy(
           buy = buy - order.priceNumerator,
-          orders = recentOrders(order)
+          sourceT = order.sourceT,
+          order = order,
+          trail = trail(order)
         )
 
       case _ if order.side == Side.Sell & order.volume > 0 =>
         copy(
           sell = sell + (order.priceNumerator -> order.volume),
-          orders = recentOrders(order)
+          sourceT = order.sourceT,
+          order = order,
+          trail = trail(order)
         )
 
       case _ if order.side == Side.Sell & order.volume == 0 =>
         copy(
           sell = sell - order.priceNumerator,
-          orders = recentOrders(order)
+          sourceT = order.sourceT,
+          order = order,
+          trail = trail(order)
         )
 
       case _ if order.side == Side.NA => this
