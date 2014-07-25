@@ -9,7 +9,17 @@ scalaVersion := "2.10.4"
 
 scalacOptions += "-deprecation"
 
+scalacOptions += "-feature"
+
 
 // Library Dependencies
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.0" % "test"
+libraryDependencies ++= Seq(
+  "org.scalaz"    %% "scalaz-core" % "7.0.6"
+)
+
+// Test Dependencies
+
+libraryDependencies ++= Seq(
+  "org.scalatest" %% "scalatest"   % "2.2.0" % "test"
+)

@@ -6,6 +6,8 @@ import scala.concurrent.duration._
 
 class OrderBookSpec extends FlatSpec with GivenWhenThen {
 
+  import FeatureSet._
+
   private val Symbol = "APL"
 
   private def orderMsg(sourceTime: Int, sourceTimeMicroSecs: Short, price: Int, volume: Int, side: Side) =
@@ -48,13 +50,11 @@ class OrderBookSpec extends FlatSpec with GivenWhenThen {
     assert(orderBook.orders.size == 3)
 
     And("basic set features correctly calculated")
-    val basicSet = new BasicSet(orderBook)
+    assert(orderBook.askPrice(1).map(_.value) == Some(11000))
+    assert(orderBook.askVolume(1).map(_.value) == Some(20))
 
-    assert(basicSet.askPrice(1).map(_.value) == Some(11000))
-    assert(basicSet.askVolume(1).map(_.value) == Some(20))
-
-    assert(basicSet.bidPrice(1).map(_.value) == Some(10000))
-    assert(basicSet.bidVolume(1).map(_.value) == Some(15))
+    assert(orderBook.bidPrice(1).map(_.value) == Some(10000))
+    assert(orderBook.bidVolume(1).map(_.value) == Some(15))
 
     Given("next order")
     val order4 = orderMsg(1001, 0, 12000, 20, Side.Sell)
@@ -67,10 +67,8 @@ class OrderBookSpec extends FlatSpec with GivenWhenThen {
     assert(orderBookUpd.orders.size == 3)
 
     And("basic set features correctly updated")
-    val basicSetUpd = new BasicSet(orderBookUpd)
-    assert(basicSetUpd.askPrice(1).map(_.value) == Some(11000))
-    assert(basicSetUpd.askPrice(2).map(_.value) == Some(12000))
-    assert(basicSetUpd.bidPrice(1).map(_.value) == Some(10000))
+    assert(orderBookUpd.askPrice(1).map(_.value) == Some(11000))
+    assert(orderBookUpd.askPrice(2).map(_.value) == Some(12000))
+    assert(orderBookUpd.bidPrice(1).map(_.value) == Some(10000))
   }
-
 }
