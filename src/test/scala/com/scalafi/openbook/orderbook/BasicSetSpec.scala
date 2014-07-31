@@ -12,14 +12,20 @@ class BasicSetSpec extends FlatSpec {
   val order3 = orderMsg(200, 0, 11000, 20, Side.Sell)
 
   val orders = Process.emitSeq[Task, OpenBookMsg](Seq(order1, order2, order3))
-  val orderBooks = OrderBook.fromOrders(Symbol, orders)
 
+  val basisSet = BasicSet(Symbol, orders)
 
   "BasicSet features" should "build valid bid prices stream" in {
-  val bid1 = BasicSet.bidPrice(orderBooks)(1)
-    val bid1Volume = BasicSet.bidVolume(orderBooks)(1)
+    val bid1 = basisSet.bidPrice(1)
+    val bid1Volume = basisSet.bidVolume(1)
 
     val bids1 = bid1.zipWith(bid1Volume)((p, v) => (p, v)).runLog.run
-    assert(bids1.last == (Some(10000), Some(15)))
+    assert(bids1.last ==(Some(10000), Some(15)))
+  }
+
+  it should "prevent from creating wrong metric" in {
+    intercept[AssertionError] {
+      basisSet.bidPrice(100)
+    }
   }
 }

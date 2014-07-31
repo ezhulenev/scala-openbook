@@ -14,33 +14,50 @@ class TimeInsensitiveSetSpec extends FlatSpec {
   val order5 = orderMsg(200, 0, 14000, 40, Side.Sell)
 
   val orders = Process.emitSeq[Task, OpenBookMsg](Seq(order1, order2, order3, order4, order5))
-  val orderBooks = OrderBook.fromOrders(Symbol, orders)
+  
+  val timeInsensitiveSet = TimeInsensitiveSet(Symbol, orders)
 
   "TimeInsensitiveSet features" should "build valid price spreads stream" in {
-    val priceSpread1 = TimeInsensitiveSet.priceSpread(orderBooks)(1)
+    val priceSpread1 = timeInsensitiveSet.priceSpread(1)
     val priceSpreads1 = priceSpread1.runLog.run
 
     assert(priceSpreads1.last == Some(1000))
   }
 
   it should "build valid volume spreads stream" in {
-    val volumeSpread1 = TimeInsensitiveSet.volumeSpread(orderBooks)(1)
+    val volumeSpread1 = timeInsensitiveSet.volumeSpread(1)
     val volumeSpreads1 = volumeSpread1.runLog.run
 
     assert(volumeSpreads1.last == Some(5))
   }
 
   it should "build valid mid price stream" in {
-    val midPrice1 = TimeInsensitiveSet.midPrice(orderBooks)(1)
+    val midPrice1 = timeInsensitiveSet.midPrice(1)
     val midPrices1 = midPrice1.runLog.run
 
     assert(midPrices1.last == Some(10500))
   }
 
   it should "build valid ask step stream" in {
-    val askStep1 = TimeInsensitiveSet.askStep(orderBooks)(1)
+    val askStep1 = timeInsensitiveSet.askStep(1)
     val askSteps1 = askStep1.runLog.run
 
     assert(askSteps1.last == Some(1000))
+  }
+
+  it should "build valid mean ask price stream" in {
+    val meanAsk = timeInsensitiveSet.meanAsk
+    val meanAsks = meanAsk.runLog.run
+
+    val expectedMean = (order3.priceNumerator.toDouble + order4.priceNumerator.toDouble + order5.priceNumerator.toDouble) / 3
+    assert(meanAsks.last == Some(expectedMean))
+  }
+
+  it should "build valid mean bid price stream" in {
+    val meanBid = timeInsensitiveSet.meanBid
+    val meanBids = meanBid.runLog.run
+
+    val expectedMean = (order1.priceNumerator.toDouble + order2.priceNumerator.toDouble) / 2
+    assert(meanBids.last == Some(expectedMean))
   }
 }
