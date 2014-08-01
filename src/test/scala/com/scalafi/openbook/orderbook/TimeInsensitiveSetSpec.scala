@@ -60,4 +60,14 @@ class TimeInsensitiveSetSpec extends FlatSpec {
     val expectedMean = (order1.priceNumerator.toDouble + order2.priceNumerator.toDouble) / 2
     assert(meanBids.last == Some(expectedMean))
   }
+
+  it should "build valid price & volume accumulators" in {
+    val accumulatedPrice = timeInsensitiveSet.accumulatedPriceSpread
+    val accumulatedVolume = timeInsensitiveSet.accumulatedVolumeSpread
+
+    val acc = (accumulatedPrice zip accumulatedVolume).runLog.run
+
+    val expectedAcc = (Some(1000), Some(5))
+    assert(acc.last == expectedAcc)
+  }
 }

@@ -24,7 +24,7 @@ class TimeInsensitiveSet private[orderbook](basicSet: BasicSet)(implicit config:
 
   private[orderbook] type Extractor[T] = OrderBook => Int => Option[T]
 
-  private[orderbook] def spread(orderBook: OrderBook)(i: Int, l: Extractor[Int], r: Extractor[Int]) = {
+  private[orderbook] def spread(orderBook: OrderBook)(i: Int, l: Extractor[Int], r: Extractor[Int]): Option[Int] = {
     ^(l(orderBook)(i), r(orderBook)(i))((lv, rv) => lv - rv)
   }
 
@@ -38,6 +38,13 @@ class TimeInsensitiveSet private[orderbook](basicSet: BasicSet)(implicit config:
 
       Some(sum / n)
     } else None
+  }
+
+  private[orderbook] def acc(orderBook: OrderBook)(ask: Extractor[Int], bid: Extractor[Int]): Option[Int] = {
+    val spreads =
+      (1 to config.orderBookDepth) map(i => ^(ask(orderBook)(i), bid(orderBook)(i))((a, b) => a - b)) takeWhile(_.isDefined) map(_.get)
+
+    if (spreads.isEmpty) None else Some(spreads.sum)
   }
 
   private def checkLevel[T](i: Int)(f: =>T): T = {
@@ -93,28 +100,15 @@ class TimeInsensitiveSet private[orderbook](basicSet: BasicSet)(implicit config:
     orderBooks.map(ob => mean(ob)(bidVolume))
   }
 
-  /*
-  def accumulatedPriceSpread(n: Int): Option[Feature[Int]] =
-    acc(n, s"accPriceSpread_$n", _.priceSpread)
-
-  def accumulatedVolumeSpread(n: Int): Option[Feature[Int]] =
-    acc(n, s"accVolumeSpread_$n", _.priceSpread)
-
-  private def spread(i: Int, name: String, l: FeatureF[Int], r: FeatureF[Int]) = {
-    ^(l(orderBook)(i), r(orderBook)(i)) {
-      (ask, bid) => Feature(name, ask.value - bid.value)
-    }
+  def accumulatedPriceSpread: Process[Task, Option[Int]] = {
+    import basicSet.askPrice
+    import basicSet.bidPrice
+    orderBooks.map(ob => acc(ob)(askPrice, bidPrice))
   }
 
-  private def mean(n: Int, name: String, f: FeatureF[Int]) =
-    acc(n, name, f) map (feature => feature.copy(value = feature.value / n))
-
-  private def acc(n: Int, name: String, f: FeatureF[Int]) = {
-    import scalaz.syntax.foldable._
-    import scalaz.std.indexedSeq._
-
-    (1 to n).map(i => f(orderBook)(i)).map(_.map(_.value)).suml.map(Feature(name, _))
+  def accumulatedVolumeSpread: Process[Task, Option[Int]] = {
+    import basicSet.askVolume
+    import basicSet.bidVolume
+    orderBooks.map(ob => acc(ob)(askVolume, bidVolume))
   }
-   */
-
 }
