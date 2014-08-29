@@ -41,6 +41,8 @@ Order book attributes/features extraction based on [Modeling high-frequency limi
 
 ## Example
 
+Features extraction is based on [Scalaz Stream](https://github.com/scalaz/scalaz-stream) library
+
 ``` scala
 import com.scalafi.openbook.orderbook._
 
