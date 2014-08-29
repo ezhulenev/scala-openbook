@@ -34,6 +34,7 @@ libraryDependencies ++= Seq(
 )
 
 // Configure publishing to bintray
+
 bintrayPublishSettings
 
 repository in bintray := "releases"
