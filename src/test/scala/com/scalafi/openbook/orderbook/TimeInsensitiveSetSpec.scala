@@ -1,9 +1,8 @@
 package com.scalafi.openbook.orderbook
 
 import org.scalatest.FlatSpec
-import com.scalafi.openbook.{OpenBookMsg, Side}
+import com.scalafi.openbook.Side
 import scalaz.stream.Process
-import scalaz.concurrent.Task
 
 class TimeInsensitiveSetSpec extends FlatSpec {
 
