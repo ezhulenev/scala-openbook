@@ -2,6 +2,20 @@
 
 Scala parser for NYSE historical data product: http://www.nyxdata.com/Data-Products/NYSE-OpenBook-History
 
+## Where to get it
+
+To get the latest version of the library, add the following to your SBT build:
+
+``` scala
+resolvers += "Scalafi Bintray Repo" at "http://dl.bintray.com/ezhulenev/releases"
+```
+
+And use following library dependencies:
+
+```
+libraryDependencies +=  "com.scalafi" %% "scala-openbook" % "0.0.1"
+```
+
 ## Order Book attributes/features extraction
 
 Order book attributes/features extraction based on [Modeling high-frequency limit order book dynamics with support vector machines](https://raw.github.com/ezhulenev/scala-openbook/master/assets/Modeling-high-frequency-limit-order-book-dynamics-with-support-vector-machines.pdf) paper.
