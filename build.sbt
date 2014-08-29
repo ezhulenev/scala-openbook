@@ -1,9 +1,12 @@
+import bintray.Keys._
+
 name := "Scala OpenBook"
 
 version := "0.0.1"
 
-organization := "com.scalafi.openbook"
+organization := "com.scalafi"
 
+licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 scalaVersion := "2.11.2"
 
@@ -29,3 +32,10 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest"   % "2.2.0" % "test"
 )
+
+// Configure publishing to bintray
+bintrayPublishSettings
+
+repository in bintray := "releases"
+
+bintrayOrganization in bintray := None
