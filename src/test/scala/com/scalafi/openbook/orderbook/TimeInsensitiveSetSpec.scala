@@ -13,7 +13,7 @@ class TimeInsensitiveSetSpec extends FlatSpec {
   val order4 = orderMsg(200, 0, 12000, 30, Side.Sell)
   val order5 = orderMsg(200, 0, 14000, 40, Side.Sell)
 
-  val orders = Process.emitSeq[Task, OpenBookMsg](Seq(order1, order2, order3, order4, order5))
+  val orders = Process.emitAll(Seq(order1, order2, order3, order4, order5))
   
   val timeInsensitiveSet = TimeInsensitiveSet(Symbol, orders)
 

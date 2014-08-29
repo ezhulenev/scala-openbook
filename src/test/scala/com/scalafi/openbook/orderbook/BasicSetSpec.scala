@@ -11,7 +11,7 @@ class BasicSetSpec extends FlatSpec {
   val order2 = orderMsg(100, 0, 10000, 15, Side.Buy)
   val order3 = orderMsg(200, 0, 11000, 20, Side.Sell)
 
-  val orders = Process.emitSeq[Task, OpenBookMsg](Seq(order1, order2, order3))
+  val orders = Process.emitAll(Seq(order1, order2, order3))
 
   val basisSet = BasicSet(Symbol, orders)
 

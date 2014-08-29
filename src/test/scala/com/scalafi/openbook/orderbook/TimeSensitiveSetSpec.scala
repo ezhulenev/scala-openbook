@@ -16,7 +16,7 @@ class TimeSensitiveSetSpec extends FlatSpec {
   val order7 = orderMsg(900, 0, 14000, 40, Side.Sell)
   val order8 = orderMsg(1100, 0, 14000, 40, Side.Sell)
 
-  val orders = Process.emitSeq[Task, OpenBookMsg](Seq(order1, order2, order3, order4, order5, order6, order7, order8))
+  val orders = Process.emitAll(Seq(order1, order2, order3, order4, order5, order6, order7, order8))
 
   val config = new TimeSensitiveSet.Config {
     import scala.concurrent.duration._
