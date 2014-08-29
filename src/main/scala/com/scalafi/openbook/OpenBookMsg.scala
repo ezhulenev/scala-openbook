@@ -1,6 +1,11 @@
 package com.scalafi.openbook
 
+import java.io.InputStream
 import java.nio.ByteBuffer
+
+import scala.io.{Codec, Source}
+import scalaz.concurrent.Task
+import scalaz.stream._
 
 
 private[openbook] trait Parser {
@@ -117,6 +122,20 @@ object OpenBookMsg extends Parser {
       parse[Int](Layout.LinkID2),
       parse[Int](Layout.LinkID3)
     )
+  }
+  
+  def stream(filename: String)(implicit codec: Codec): Process[Task, OpenBookMsg] =  
+    stream(Source.fromFile(filename)(codec))
+  
+  def stream(is: => InputStream)(implicit codec: Codec): Process[Task, OpenBookMsg] =
+    stream(Source.fromInputStream(is)(codec))
+  
+  def stream(src: => Source): Process[Task, OpenBookMsg] = {
+    import scalaz.stream.io.resource
+    resource(Task.delay(src))(src => Task.delay(src.close())) { src =>
+      lazy val lines = src.map(_.toByte).grouped(69).map(_.toArray)
+      Task.delay { if (lines.hasNext) OpenBookMsg(lines.next()) else throw Cause.Terminated(Cause.End) }
+    }
   }
 }
 

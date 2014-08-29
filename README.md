@@ -13,7 +13,7 @@ resolvers += "Scalafi Bintray Repo" at "http://dl.bintray.com/ezhulenev/releases
 And use following library dependencies:
 
 ```
-libraryDependencies +=  "com.scalafi" %% "scala-openbook" % "0.0.1"
+libraryDependencies +=  "com.scalafi" %% "scala-openbook" % "0.0.2"
 ```
 
 ## Order Book attributes/features extraction
