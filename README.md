@@ -76,7 +76,7 @@ object Example extends App {
 }
 ```
 
-####### Output
+###### Output
 
 ```
 Ask: None. Bid: None. Spread: None
