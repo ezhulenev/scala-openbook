@@ -79,11 +79,11 @@ object Example extends App {
 ###### Output
 
 ```
-Ask: None. Bid: None. Spread: None
-Ask: None. Bid: None. Spread: None
-Ask: None. Bid: Some(178000). Spread: None
-Ask: None. Bid: Some(290500). Spread: None
-Ask: Some(420000). Bid: Some(290500). Spread: Some(129500)
-Ask: Some(380000). Bid: Some(290500). Spread: Some(89500)
-Ask: Some(380000). Bid: Some(322000). Spread: Some(58000)
+Ask: n/a. Bid: n/a. Spread: n/a
+Ask: n/a. Bid: n/a. Spread: n/a
+Ask: n/a. Bid: 178000. Spread: n/a
+Ask: n/a. Bid: 290500. Spread: n/a
+Ask: 420000. Bid: 290500. Spread: 129500
+Ask: 380000. Bid: 290500. Spread: 89500
+Ask: 380000. Bid: 322000. Spread: 58000
 ```
