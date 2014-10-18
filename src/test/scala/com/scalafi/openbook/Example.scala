@@ -12,7 +12,7 @@ object Example extends App {
   val ticker = "APL"
   val source = this.getClass.getResource("/openbookultraAA_N20130403_1_of_1").getPath
 
-  val orders = OpenBookMsg.stream(source).
+  val orders = OpenBookMsg.read(source).
     filter(_.symbol == ticker)
 
   val basicSet = BasicSet(ticker, orders)

@@ -124,18 +124,28 @@ object OpenBookMsg extends Parser {
     )
   }
   
-  def stream(filename: String)(implicit codec: Codec): Process[Task, OpenBookMsg] =  
-    stream(Source.fromFile(filename)(codec))
+  def read(filename: String)(implicit codec: Codec): Process[Task, OpenBookMsg] =  
+    read(Source.fromFile(filename)(codec))
   
-  def stream(is: => InputStream)(implicit codec: Codec): Process[Task, OpenBookMsg] =
-    stream(Source.fromInputStream(is)(codec))
+  def read(is: => InputStream)(implicit codec: Codec): Process[Task, OpenBookMsg] =
+    read(Source.fromInputStream(is)(codec))
   
-  def stream(src: => Source): Process[Task, OpenBookMsg] = {
+  def read(src: => Source): Process[Task, OpenBookMsg] = {
     import scalaz.stream.io.resource
     resource(Task.delay(src))(src => Task.delay(src.close())) { src =>
       lazy val lines = src.map(_.toByte).grouped(69).map(_.toArray)
       Task.delay { if (lines.hasNext) OpenBookMsg(lines.next()) else throw Cause.Terminated(Cause.End) }
     }
+  }
+
+  def iterate(filename: String)(implicit codec: Codec): Iterator[OpenBookMsg] =
+    iterate(Source.fromFile(filename)(codec))
+
+  def iterate(is: => InputStream)(implicit codec: Codec): Iterator[OpenBookMsg] =
+    iterate(Source.fromInputStream(is)(codec))
+
+  def iterate(src: => Source): Iterator[OpenBookMsg] = {
+    src.map(_.toByte).grouped(69).map(_.toArray).map(OpenBookMsg.apply)
   }
 }
 

@@ -2,7 +2,7 @@ import bintray.Keys._
 
 name := "Scala OpenBook"
 
-version := "0.0.3"
+version := "0.0.4"
 
 organization := "com.scalafi"
 
