@@ -2,13 +2,15 @@ import bintray.Keys._
 
 name := "Scala OpenBook"
 
-version := "0.0.2"
+version := "0.0.3"
 
 organization := "com.scalafi"
 
 licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 scalaVersion := "2.11.2"
+
+crossScalaVersions in ThisBuild := Seq("2.10.4", "2.11.2")
 
 scalacOptions += "-deprecation"
 
