@@ -8,6 +8,8 @@ object OrderBook {
 
   import scalaz.stream.Process
 
+  def empty(symbol: String): OrderBook = new OrderBook(symbol)
+
   def fromOrders(symbol: String, orders: Process[Task, OpenBookMsg]): Process[Task, OrderBook] =
     orders.scan(OrderBook(symbol)) {
       (ob, order) => ob.update(order)
