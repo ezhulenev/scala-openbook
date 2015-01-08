@@ -6,7 +6,7 @@ version := "0.0.6"
 
 organization := "com.scalafi"
 
-licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
+licenses in ThisBuild += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 scalaVersion := "2.11.2"
 
