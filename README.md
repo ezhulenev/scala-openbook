@@ -1,5 +1,7 @@
 # TAQ NYSE OpenBook Ultra Parser
 
+[![Build Status](https://travis-ci.org/vincentk/scala-openbook.svg?branch=master)](https://travis-ci.org/vincentk/scala-openbook)
+
 Scala parser for NYSE historical data product: http://www.nyxdata.com/Data-Products/NYSE-OpenBook-History
 
 ## Where to get it
