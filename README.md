@@ -7,7 +7,7 @@ Scala parser for NYSE historical data product: http://www.nyxdata.com/Data-Produ
 To get the latest version of the library, add the following to your SBT build:
 
 ``` scala
-resolvers += "Scalafi Bintray Repo" at "http://dl.bintray.com/ezhulenev/releases"
+resolvers += "Scalafi Bintray Repo" at "https://dl.bintray.com/ezhulenev/releases"
 ```
 
 And use following library dependencies:
