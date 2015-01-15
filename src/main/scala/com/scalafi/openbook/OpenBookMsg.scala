@@ -2,9 +2,6 @@ package com.scalafi.openbook
 
 import java.io.InputStream
 import java.nio.ByteBuffer
-import scala.io.{Codec, Source}
-import scalaz.concurrent.Task
-import scalaz.stream._
 import java.io.FileInputStream
 import java.io.File
 import java.io.BufferedInputStream
@@ -129,18 +126,6 @@ object OpenBookMsg extends Parser {
       parse[Int](Layout.LinkID2),
       parse[Int](Layout.LinkID3)
     )
-  }
-
-  def read(filename: File) : Process[Task, OpenBookMsg] =  
-    read(new BufferedInputStream(new FileInputStream(filename)))
-  
-  def read(is: InputStream) : Process[Task, OpenBookMsg] = {
-
-    import scalaz.stream.io.resource
-    resource(Task.delay(is))(src => Task.delay(src.close())) { src =>
-      lazy val lines = iterate(is)
-      Task.delay { if (lines.hasNext) lines.next() else throw Cause.Terminated(Cause.End) }
-    }
   }
 
   def iterate(filename: File) : Iterator[OpenBookMsg] =

@@ -20,9 +20,8 @@ class OpenBookParserSpec extends FlatSpec {
   it should "stream it from InputStream" in {
     val is = this.getClass.getResourceAsStream("/openbookultraAA_N20130403_1_of_1")
 
-    val orders = OpenBookMsg.read(is)
-    val parsed = orders.runLog.run
-    assert(parsed.size == 1000)
+    val orders = OpenBookMsg.iterate(is)
+    assert(orders.size == 1000)
   }
 
   it should "build iterator from InputStream" in {

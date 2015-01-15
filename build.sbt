@@ -19,18 +19,9 @@ scalacOptions += "-feature"
 
 // Resolvers
 
-resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
-
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
-)
-
-// Library Dependencies
-
-libraryDependencies ++= Seq(
-  "org.scalaz"        %% "scalaz-core"   % "7.1.0",
-  "org.scalaz.stream" %% "scalaz-stream" % "0.5a"
 )
 
 // Test Dependencies
