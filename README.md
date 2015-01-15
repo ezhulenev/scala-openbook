@@ -15,5 +15,5 @@ resolvers += "Scalafi Bintray Repo" at "https://dl.bintray.com/ezhulenev/release
 And use following library dependencies:
 
 ```
-libraryDependencies +=  "com.scalafi" %% "scala-openbook" % "0.0.7"
+libraryDependencies +=  "com.scalafi" %% "scala-openbook" % "0.0.8"
 ```
