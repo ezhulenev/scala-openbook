@@ -2,7 +2,11 @@ package com.scalafi.openbook
 
 import java.io.InputStream
 
-
+/**
+ * Wraps an input stream into an `Iterator` interface. Note that the underlying Array[Byte]
+ * is NOT re-allocated. So the iterator itself assumes that the message is consumed / interpreted
+ * before the next call to `next`.
+ */
 final class ByteArrayIterator(is : InputStream, len : Int) extends Iterator[Array[Byte]] {
 
   assume(len > 0, s"Message length must be positive. Found: ${len}")

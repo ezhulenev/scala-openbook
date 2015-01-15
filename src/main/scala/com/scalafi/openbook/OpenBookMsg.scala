@@ -147,6 +147,7 @@ object OpenBookMsg extends Parser {
     iterate(new BufferedInputStream(new FileInputStream(filename)))
 
   def iterate(is: InputStream) : Iterator[OpenBookMsg] =
+    // the underlying iterator is not thread-safe, however, the returned iterator is:
     new ByteArrayIterator(is, msgLength).map(OpenBookMsg.apply)
 }
 
