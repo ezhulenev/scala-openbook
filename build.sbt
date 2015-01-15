@@ -46,6 +46,3 @@ bintrayPublishSettings
 repository in bintray := "releases"
 
 bintrayOrganization in bintray := None
-
-// Let's be nice to eclipse users:
-EclipseKeys.withSource := true
