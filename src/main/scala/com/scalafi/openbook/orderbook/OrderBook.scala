@@ -47,7 +47,8 @@ object OrderBook {
 
 case class OrderBook(symbol: String,
 		buy: TreeMap[Int, Int] = TreeMap.empty,
-		sell: TreeMap[Int, Int] = TreeMap.empty
+		sell: TreeMap[Int, Int] = TreeMap.empty,
+    lastMsg : OpenBookMsg = null
     ) {
 
 	def update(order: OpenBookMsg): OrderBook = {
@@ -55,18 +56,18 @@ case class OrderBook(symbol: String,
 
 			order match {
 			case _ if order.side == Side.Buy & order.volume > 0 =>
-			copy(buy = buy + (order.priceNumerator -> order.volume))
+			copy(buy = buy + (order.priceNumerator -> order.volume), lastMsg = order)
 
 			case _ if order.side == Side.Buy & order.volume == 0 =>
-			copy(buy = buy - order.priceNumerator)
+			copy(buy = buy - order.priceNumerator, lastMsg = order)
 
 			case _ if order.side == Side.Sell & order.volume > 0 =>
-			copy(sell = sell + (order.priceNumerator -> order.volume))
+			copy(sell = sell + (order.priceNumerator -> order.volume), lastMsg = order)
 
 			case _ if order.side == Side.Sell & order.volume == 0 =>
-			copy(sell = sell - order.priceNumerator)
+			copy(sell = sell - order.priceNumerator, lastMsg = order)
 
-			case _ if order.side == Side.NA => this
+			case _ if order.side == Side.NA => copy(lastMsg = order)
 			}
 	}
 
