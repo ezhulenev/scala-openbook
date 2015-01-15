@@ -48,8 +48,10 @@ class OrderBookSpec extends FlatSpec with GivenWhenThen {
 
   }
   
-  it should "build valid stream of order books either a stream of messages corresponding to different symbols " in {
-    val is = this.getClass.getResourceAsStream("/openbookultraAA_N20130403_1_of_1")
+  it should "also support a stream of messages corresponding to different symbols " in {
+    def is = this.getClass.getResourceAsStream("/openbookultraAA_N20130403_1_of_1")
+    
+    Then("the number of symbols for in the message stream should match the number of symbols in the order book stream")
     val symbolsInMessages = OpenBookMsg.iterate(is).map(_.symbol).toSet
     val symbolsInOrderBooks = OrderBook.fromOrders(OpenBookMsg.iterate(is)).map(_.lastMsg.symbol).toSet
 
