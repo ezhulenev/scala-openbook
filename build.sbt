@@ -2,7 +2,7 @@ import bintray.Keys._
 
 name := "Scala OpenBook"
 
-version := "0.0.7"
+version := "0.0.8"
 
 organization := "com.scalafi"
 
@@ -46,3 +46,6 @@ bintrayPublishSettings
 repository in bintray := "releases"
 
 bintrayOrganization in bintray := None
+
+// Let's be nice to eclipse users:
+EclipseKeys.withSource := true
