@@ -18,7 +18,8 @@ object OrderBook {
 	}
 
 	/**
-	 * Time series of OrderBooks for a stream of order messages for a multiple symbols:
+	 * Time series of OrderBooks for a stream of order messages for a multiple symbols.
+   * The iterator will always return the order book corresponding to the most recent message.
 	 */
 	def fromOrders(orders: Iterator[OpenBookMsg]): Iterator[OrderBook] = {
 		val obs = new HashMap[String, OrderBook];
