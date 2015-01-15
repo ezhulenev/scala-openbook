@@ -2,10 +2,12 @@ package com.scalafi.openbook
 
 import java.io.InputStream
 import java.nio.ByteBuffer
-
 import scala.io.{Codec, Source}
 import scalaz.concurrent.Task
 import scalaz.stream._
+import java.io.FileInputStream
+import java.io.File
+import java.io.BufferedInputStream
 
 
 private[openbook] trait Parser {
@@ -66,6 +68,11 @@ private[openbook] trait Parser {
 
 object OpenBookMsg extends Parser {
 
+  /**
+   * Number of bytes per message:
+   */
+  val msgLength = 69
+  
   private object Layout {
     val MsgSeqNum           = 1  -> 4
     val MsgType             = 5  -> 6
@@ -94,7 +101,7 @@ object OpenBookMsg extends Parser {
   }
 
   def apply(bytes: Array[Byte]): OpenBookMsg = {
-    assume(bytes.length == 69, s"Unexpected message length: ${bytes.length}")
+    assume(bytes.length == msgLength, s"Unexpected message length: ${bytes.length}")
 
     implicit val b = bytes
 
@@ -123,31 +130,27 @@ object OpenBookMsg extends Parser {
       parse[Int](Layout.LinkID3)
     )
   }
+
+  def read(filename: File) : Process[Task, OpenBookMsg] =  
+    read(new BufferedInputStream(new FileInputStream(filename)))
   
-  def read(filename: String)(implicit codec: Codec): Process[Task, OpenBookMsg] =  
-    read(Source.fromFile(filename)(codec))
-  
-  def read(is: InputStream)(implicit codec: Codec): Process[Task, OpenBookMsg] =
-    read(Source.fromInputStream(is)(codec))
-  
-  def read(src: Source): Process[Task, OpenBookMsg] = {
+  def read(is: InputStream) : Process[Task, OpenBookMsg] = {
+
     import scalaz.stream.io.resource
-    resource(Task.delay(src))(src => Task.delay(src.close())) { src =>
-      lazy val lines = src.map(_.toByte).grouped(69).map(_.toArray)
-      Task.delay { if (lines.hasNext) OpenBookMsg(lines.next()) else throw Cause.Terminated(Cause.End) }
+    resource(Task.delay(is))(src => Task.delay(src.close())) { src =>
+      lazy val lines = iterate(is)
+      Task.delay { if (lines.hasNext) lines.next() else throw Cause.Terminated(Cause.End) }
     }
   }
 
-  def iterate(filename: String)(implicit codec: Codec): Iterator[OpenBookMsg] =
-    iterate(Source.fromFile(filename)(codec))
+  def iterate(filename: File) : Iterator[OpenBookMsg] =
+    iterate(new BufferedInputStream(new FileInputStream(filename)))
 
-  def iterate(is: InputStream)(implicit codec: Codec): Iterator[OpenBookMsg] =
-    iterate(Source.fromInputStream(is)(codec))
-
-  def iterate(src: Source): Iterator[OpenBookMsg] = {
-    src.map(_.toByte).grouped(69).map(_.toArray).map(OpenBookMsg.apply)
-  }
+  def iterate(is: InputStream) : Iterator[OpenBookMsg] =
+    // the underlying iterator is not thread-safe, however, the returned iterator is:
+    new ByteArrayIterator(is, msgLength).map(OpenBookMsg.apply)
 }
+
 
 case class OpenBookMsg(msgSeqNum: Int,
                        msgType: MsgType,
