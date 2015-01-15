@@ -2,7 +2,6 @@ package com.scalafi.openbook.orderbook
 
 import org.scalatest.{GivenWhenThen, FlatSpec}
 import com.scalafi.openbook._
-import scalaz.concurrent.Task
 
 class OrderBookSpec extends FlatSpec with GivenWhenThen {
 
@@ -31,25 +30,21 @@ class OrderBookSpec extends FlatSpec with GivenWhenThen {
 
   it should "build valid stream of order books" in {
 
-    import scalaz.stream._
-
     Given("three orders")
     val order1 = orderMsg(0, 0, 10000, 10, Side.Buy)
     val order2 = orderMsg(100, 0, 10000, 15, Side.Buy)
     val order3 = orderMsg(200, 0, 11000, 20, Side.Sell)
 
-    val orders: Process[Task, OpenBookMsg] =
-      Process.emitAll(Seq(order1, order2, order3))
+    val orders: Iterator[OpenBookMsg] = Seq(order1, order2, order3).iterator
 
     Then("stream of three order books should be created")
-    val orderBooks = orders.zipWith(OrderBook.fromOrders(Symbol, orders))((o, ob) => (o, ob))
+    val orderBooks = OrderBook.fromOrders(Symbol, orders)
 
-    val trail = orderBooks.runLog.run
+    assert(orderBooks.next().buy.get(order1.priceNumerator).get == order1.volume)
+    assert(orderBooks.next().buy.get(order2.priceNumerator).get == order2.volume)
+    assert(orderBooks.next().sell.get(order3.priceNumerator).get == order3.volume)
+    
+    assert(!orderBooks.hasNext)
 
-    assert(trail.size == 3)
-
-    assert(trail(0)._1 == order1)
-    assert(trail(1)._1 == order2)
-    assert(trail(2)._1 == order3)
   }
 }

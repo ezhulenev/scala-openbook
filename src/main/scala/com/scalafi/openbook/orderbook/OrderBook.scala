@@ -2,18 +2,15 @@ package com.scalafi.openbook.orderbook
 
 import scala.collection.immutable.TreeMap
 import com.scalafi.openbook.{Side, OpenBookMsg}
-import scalaz.concurrent.Task
 
 object OrderBook {
 
-  import scalaz.stream.Process
-
   def empty(symbol: String): OrderBook = new OrderBook(symbol)
 
-  def fromOrders(symbol: String, orders: Process[Task, OpenBookMsg]): Process[Task, OrderBook] =
-    orders.scan(OrderBook(symbol)) {
-      (ob, order) => ob.update(order)
-    }
+  def fromOrders(symbol: String, orders: Iterator[OpenBookMsg]): Iterator[OrderBook] = {
+    val ob = empty(symbol)
+    orders.map { ob.update(_) }
+  }
 }
 
 case class OrderBook(symbol: String,

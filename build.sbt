@@ -2,7 +2,7 @@ import bintray.Keys._
 
 name := "Scala OpenBook"
 
-version := "0.0.8"
+version := "0.0.9"
 
 organization := "com.scalafi"
 
@@ -19,18 +19,9 @@ scalacOptions += "-feature"
 
 // Resolvers
 
-resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
-
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
-)
-
-// Library Dependencies
-
-libraryDependencies ++= Seq(
-  "org.scalaz"        %% "scalaz-core"   % "7.1.0",
-  "org.scalaz.stream" %% "scalaz-stream" % "0.5a"
 )
 
 // Test Dependencies
