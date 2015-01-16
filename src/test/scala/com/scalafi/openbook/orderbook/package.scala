@@ -2,14 +2,14 @@ package com.scalafi.openbook
 
 package object orderbook {
 
-  val Symbol = "APL"
+  val SYMBOL_APL = "APL" : String
 
   def orderMsg(sourceTime: Int, sourceTimeMicroSecs: Short, price: Int, volume: Int, side: Side) =
     OpenBookMsg(
       msgSeqNum = 0,
       msgType = MsgType.DeltaUpdate,
       sendTime = 0,
-      symbol = Symbol,
+      symbol = SYMBOL_APL,
       msgSize = 46,
       securityIndex = 0,
       sourceTime = sourceTime + 300000,
